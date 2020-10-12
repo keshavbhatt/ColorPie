@@ -1,0 +1,38 @@
+<RCC>
+    <qresource prefix="/">
+        <file>icons/icon-16.png</file>
+        <file>icons/icon-32.png</file>
+        <file>icons/icon-64.png</file>
+        <file>icons/icon-128.png</file>
+        <file>icons/icon-512.png</file>
+        <file>icons/others/close-fill.png</file>
+        <file>icons/others/delete-bin-5-line.png</file>
+        <file>icons/others/error-warning-line.png</file>
+        <file>icons/others/eye-line.png</file>
+        <file>icons/others/file-copy-line.png</file>
+        <file>icons/others/file-text-line.png</file>
+        <file>icons/others/file-unknow-line.png</file>
+        <file>icons/others/folder-open-line.png</file>
+        <file>icons/others/information-line.png</file>
+        <file>icons/others/links-line.png</file>
+        <file>icons/others/link-unlink-m.png</file>
+        <file>icons/others/paypal-line.png</file>
+        <file>icons/others/star-line.png</file>
+        <file>html/jtm/jquery.tinymodal.css</file>
+        <file>html/jtm/jquery.tinymodal.js</file>
+        <file>html/toastr/toastr.min.css</file>
+        <file>html/toastr/toastr.min.js</file>
+        <file>html/favicon.ico</file>
+        <file>html/icon-128.png</file>
+        <file>html/icon-64.png</file>
+        <file>html/index.js</file>
+        <file>html/jquery-3.5.1.min.js</file>
+        <file>html/texture.png</file>
+        <file>html/v2/app.0f8e8639.js</file>
+        <file>html/v2/app.9d39357a.css</file>
+        <file>html/v2/bootstrap.min.css</file>
+        <file>html/v2/chunk-vendors.4a7ab7d0.js</file>
+        <file>html/v2.html</file>
+        <file>icons/icon-256.png</file>
+    </qresource>
+</RCC>
