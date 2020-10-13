@@ -25,11 +25,8 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
 
     QWebEngineProfile *weProfile = new QWebEngineProfile(QApplication::applicationName(),this);
 
-    weProfile->setHttpUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0");
-    weProfile->setPersistentCookiesPolicy(QWebEngineProfile::ForcePersistentCookies);
-
     QWebEnginePage *webenginepage = new QWebEnginePage(weProfile, this);
-//  webenginepage->setBackgroundColor(QColor("#181818"));
+    webenginepage->setBackgroundColor(QColor("#EFF0F1"));
 
     connect(webenginepage,&QWebEnginePage::titleChanged,[=](const QString titleStr){
         this->setWindowTitle(QApplication::applicationName()+" | "+QString(titleStr));
@@ -71,7 +68,7 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
         restoreState(settings.value("windowState").toByteArray());
     }
     ui->webView->layout()->setContentsMargins(9,0,0,0);
-    ui->webView->load(serverBase+"/v2.html");
+    ui->webView->load(QUrl(serverBase));
 }
 void MainWindow::loadColor(QString colorStr)
 {
