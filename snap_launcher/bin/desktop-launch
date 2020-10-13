@@ -132,8 +132,8 @@ WITH_RUNTIME=no
 # webengine513 runtime selection #
 ###########################
 
-if [ -d $SNAP/qt551 ]; then
-  RUNTIME=$SNAP/qt551
+if [ -d $SNAP/qt513 ]; then
+  RUNTIME=$SNAP/qt513
   WITH_RUNTIME=yes
 fi
 
@@ -185,7 +185,8 @@ append_dir LD_LIBRARY_PATH $RUNTIME/usr/lib/$ARCH/pulseaudio
     append_dir __EGL_VENDOR_LIBRARY_DIRS /var/lib/snapd/lib/glvnd/egl_vendor.d
 
 # Tell GStreamer where to find its plugins
-export GST_PLUGIN_PATH=$SNAP/usr/lib/$ARCH/gstreamer-1.0
+#export GST_PLUGIN_PATH=$SNAP/usr/lib/$ARCH/gstreamer-1.0
+export GST_PLUGIN_PATH=$RUNTIME/usr/lib/$ARCH/gstreamer-1.0
 export GST_PLUGIN_SYSTEM_PATH=$RUNTIME/usr/lib/$ARCH/gstreamer-1.0
 # gst plugin scanner doesn't install in the correct path: https://github.com/ubuntu/snapcraft-desktop-helpers/issues/43
 export GST_PLUGIN_SCANNER=$RUNTIME/usr/lib/$ARCH/gstreamer1.0/gstreamer-1.0/gst-plugin-scanner
@@ -517,7 +518,7 @@ ln -sfn $REALHOME/.config/ibus/bus $IBUS_CONFIG_PATH
 #############################
 
 # select qt version
-. $SNAP/qt551/flavor-select
+. $SNAP/qt513/flavor-select
 
 export QTCHOOSER_NO_GLOBAL_DIR=1
 if [ "$USE_qt5" = true ]; then
@@ -571,7 +572,8 @@ fi
 append_dir GTK_PATH $RUNTIME/usr/lib/$ARCH/gtk-2.0
 
 # Fix locating the QtWebEngineProcess executable
-export QTWEBENGINEPROCESS_PATH=$RUNTIME/usr/lib/$ARCH/qt5/libexec/QtWebEngineProcess
+#export QTWEBENGINEPROCESS_PATH=$RUNTIME/usr/lib/$ARCH/qt5/libexec/QtWebEngineProcess
+export QTWEBENGINEPROCESS_PATH=$RUNTIME/usr/libexec/QtWebEngineProcess
 ###############################
 # Mark update and exec binary #
 ###############################
