@@ -19,7 +19,7 @@ int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
     QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
-    QApplication::setApplicationName("ColorConv");
+    QApplication::setApplicationName("ColorConverter");
     QApplication::setOrganizationName("org.keshavnrj.ubuntu");
     QCoreApplication::setApplicationVersion("1");
 
@@ -31,29 +31,19 @@ int main(int argc, char *argv[])
         QCoreApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
     }
 
-
-    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::PluginsEnabled, true);
-    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::DnsPrefetchEnabled, true);
-    QWebEngineSettings::defaultSettings()->setAttribute(QWebEngineSettings::FullScreenSupportEnabled, true);
-
-    QWebEngineProfile::defaultProfile()->setUseForGlobalCertificateVerification();
-    QWebEngineProfile::defaultProfile()->setPersistentCookiesPolicy(QWebEngineProfile::ForcePersistentCookies);
-
-
-
     QHttpServer httpServer;
 
     httpServer.route("/<arg>", [] (const QUrl &url) {
         if(url.isEmpty()){
             return QHttpServerResponse::fromFile(QStringLiteral(":/html/%1").arg("index.html"));
         }else{
-            qDebug()<<url;
+//            qDebug()<<url;
             return QHttpServerResponse::fromFile(QStringLiteral(":/html/%1").arg(url.path()));
         }
     });
 
     httpServer.route("/html/<arg>", [] (const QUrl &url) {
-        qDebug()<<url;
+//        qDebug()<<url;
         return QHttpServerResponse::fromFile(QStringLiteral(":/html/%1").arg(url.path()));
     });
 
