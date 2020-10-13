@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     split1->setObjectName("split1");
     split1->setOrientation(Qt::Horizontal);
     split1->addWidget(managerWidget);
-    split1->addWidget(ui->webView);
+    split1->addWidget(ui->webviewWidget);
     split1->setStretchFactor(0,2);
     split1->setStretchFactor(1,2);
     ui->centralWidget->layout()->addWidget(split1);
@@ -67,7 +67,7 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
     }
-    ui->webView->layout()->setContentsMargins(9,0,0,0);
+    ui->webviewWidget->layout()->setContentsMargins(9,0,0,0);
     ui->webView->load(QUrl(serverBase));
 }
 void MainWindow::loadColor(QString colorStr)
