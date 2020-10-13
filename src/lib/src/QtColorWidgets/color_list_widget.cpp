@@ -27,6 +27,7 @@ namespace color_widgets {
 class ColorListWidget::Private
 {
 public:
+    QColor                      currentColor;
     QList<QColor>               colors;
     QSignalMapper               mapper;
     ColorWheel::ShapeEnum       wheel_shape = ColorWheel::ShapeTriangle;
@@ -49,6 +50,11 @@ ColorListWidget::~ColorListWidget()
 QList<QColor> ColorListWidget::colors() const
 {
     return p->colors;
+}
+
+void ColorListWidget::setColor(const QColor &color)
+{
+    p->currentColor = color;
 }
 
 void ColorListWidget::setColors(const QList<QColor> &colors)
@@ -75,7 +81,7 @@ void ColorListWidget::swap(int a, int b)
 
 void ColorListWidget::append()
 {
-    p->colors.push_back(Qt::black);
+    p->colors.push_back(p->currentColor);
     append_widget(p->colors.size()-1);
     Q_EMIT colorsChanged(p->colors);
 }
@@ -113,7 +119,7 @@ void ColorListWidget::append_widget(int col)
     connect(this, &ColorListWidget::wheelShapeChanged, cbs, &ColorSelector::setWheelShape);
     connect(this, &ColorListWidget::colorSpaceChanged, cbs, &ColorSelector::setColorSpace);
     appendWidget(cbs);
-    setRowHeight(count()-1,22);
+    //setRowHeight(count()-1,22);
 }
 
 void ColorListWidget::setWheelShape(ColorWheel::ShapeEnum shape)

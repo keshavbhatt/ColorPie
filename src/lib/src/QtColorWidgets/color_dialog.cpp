@@ -56,8 +56,15 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     setAcceptDrops(true);
 
     // Add "pick color" button
-    QPushButton *pickButton = p->ui.buttonBox->addButton(tr("Pick"), QDialogButtonBox::ActionRole);
-    pickButton->setIcon(QIcon::fromTheme(QStringLiteral("color-picker")));
+    QPushButton *pickButton = new QPushButton(tr("Pick"),this);
+    pickButton->setObjectName("picker");
+    p->ui.pickLayout->addWidget(pickButton);
+    pickButton->setIcon(QIcon(":/color_widgets/drop-line.png"));
+
+    connect(pickButton,&QPushButton::clicked,[=](){
+        grabMouse(Qt::CrossCursor);
+        p->pick_from_screen = true;
+    });
 
     setButtonMode(OkApplyCancel);
 
@@ -135,6 +142,7 @@ void ColorDialog::setButtonMode(ButtonMode mode)
     switch(mode) {
         case OkCancel: btns = QDialogButtonBox::Ok | QDialogButtonBox::Cancel; break;
         case OkApplyCancel: btns = QDialogButtonBox::Ok | QDialogButtonBox::Cancel | QDialogButtonBox::Apply | QDialogButtonBox::Reset; break;
+        case NoButton: btns = QDialogButtonBox::NoButton; break;
         case Close: btns = QDialogButtonBox::Close;
     }
     p->ui.buttonBox->setStandardButtons(btns);

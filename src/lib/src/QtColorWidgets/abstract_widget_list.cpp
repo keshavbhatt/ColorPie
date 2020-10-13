@@ -24,6 +24,7 @@
 #include <QVBoxLayout>
 #include <QHeaderView>
 #include <QPushButton>
+#include <QDebug>
 
 class AbstractWidgetList::Private
 {
@@ -48,16 +49,20 @@ AbstractWidgetList::AbstractWidgetList(QWidget *parent) :
     p->table = new QTableWidget(this);
     verticalLayout->addWidget(p->table);
 
+//    p->table->horizontalHeader()->setStretchLastSection(true);
 
     p->table->insertColumn(0);
     p->table->insertColumn(1);
     p->table->insertColumn(2);
     p->table->insertColumn(3);
 
-    p->table->setColumnWidth(0,128);
-    p->table->setColumnWidth(1,24);
-    p->table->setColumnWidth(2,24);
-    p->table->setColumnWidth(3,24);
+    p->table->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    p->table->setSelectionMode(QAbstractItemView::NoSelection);
+
+    p->table->setColumnWidth(0,120);
+    p->table->setColumnWidth(1,30);
+    p->table->setColumnWidth(2,30);
+    p->table->setColumnWidth(3,30);
 
     p->table->horizontalHeader()->hide();
     p->table->verticalHeader()->hide();
@@ -118,10 +123,12 @@ void AbstractWidgetList::appendWidget(QWidget *w)
     QWidget* b_up = create_button(w,&p->mapper_up,QStringLiteral("go-up"),tr("Move Up"));
     QWidget* b_down = create_button(w,&p->mapper_down,QStringLiteral("go-down"),tr("Move Down"));
     QWidget* b_remove = create_button(w,&p->mapper_remove,QStringLiteral("list-remove"),tr("Remove"));
-    if ( row == 0 )
+    if ( row == 0 ){
         b_up->setEnabled(false);
-    else
+    }
+    else {
         p->table->cellWidget(row-1,2)->setEnabled(true);
+    }
     b_down->setEnabled(false);
 
     p->table->setCellWidget(row,0,w);
@@ -129,6 +136,10 @@ void AbstractWidgetList::appendWidget(QWidget *w)
     p->table->setCellWidget(row,2,b_down);
     p->table->setCellWidget(row,3,b_remove);
 
+    p->table->resizeRowsToContents();
+    p->table->resizeColumnsToContents();
+
+    p->table->scrollToBottom();
     p->widgets.push_back(w);
 }
 
@@ -145,9 +156,25 @@ QWidget *AbstractWidgetList::create_button(QWidget *data, QSignalMapper *mapper,
                                              QString text, QString tooltip) const
 {
 
-    QToolButton* btn = new QToolButton;
-    btn->setIcon(QIcon::fromTheme(icon_name));
-    btn->setText(text);
+    QPushButton* btn = new QPushButton;
+    //workaround for icon issue
+    btn->setIconSize(QSize(22,22));
+    QStringList iconname = {"go-up","go-down","list-remove"};
+    switch (iconname.indexOf(icon_name)) {
+    case 0:
+        btn->setIcon(QIcon(":/color_widgets/arrow-up-s-line.png"));
+        break;
+    case 1:
+        btn->setIcon(QIcon(":/color_widgets/arrow-down-s-line.png"));
+        break;
+    case 2:
+        btn->setIcon(QIcon(":/color_widgets/delete-bin-7-line.png"));
+        break;
+    default:
+        btn->setIcon(QIcon::fromTheme(icon_name));
+        break;
+    }
+//    btn->setText(text);
     btn->setToolTip(tooltip.isNull() ? btn->text() : tooltip );
     connect(btn,SIGNAL(clicked()),mapper,SLOT(map()));
     mapper->setMapping(btn,data);

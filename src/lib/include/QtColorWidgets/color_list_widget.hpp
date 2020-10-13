@@ -47,6 +47,8 @@ public:
 
     void append();
 
+    void setColor(const QColor& color);
+
     ColorWheel::ShapeEnum wheelShape() const;
     ColorWheel::ColorSpaceEnum colorSpace() const;
     bool wheelRotating() const;

@@ -70,7 +70,7 @@ protected:
     /**
      *  \brief Create a new row with the given widget
      *
-     *  Must be caled by implementations of append()
+     *  Must be called by implementations of append()
      */
     void appendWidget(QWidget* w);
 

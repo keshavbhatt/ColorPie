@@ -15,8 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset theme="format-fill-color">
-    <normaloff/>
-   </iconset>
+    <normaloff>.</normaloff>.</iconset>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout_2">
    <item>
@@ -24,7 +23,7 @@
      <item>
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
-        <widget class="color_widgets::ColorWheel" name="wheel">
+        <widget class="color_widgets::ColorWheel" name="wheel" native="true">
          <property name="sizePolicy">
           <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
            <horstretch>0</horstretch>
@@ -34,11 +33,7 @@
         </widget>
        </item>
        <item>
-        <widget class="color_widgets::ColorPreview" name="preview">
-         <property name="display_mode" stdset="0">
-          <enum>color_widgets::ColorPreview::SplitColor</enum>
-         </property>
-        </widget>
+        <widget class="color_widgets::ColorPreview" name="preview" native="true"/>
        </item>
       </layout>
      </item>
@@ -250,7 +245,7 @@
            <family>Monospace</family>
           </font>
          </property>
-         <property name="showAlpha">
+         <property name="showAlpha" stdset="0">
           <bool>true</bool>
          </property>
         </widget>
@@ -258,6 +253,9 @@
       </layout>
      </item>
     </layout>
+   </item>
+   <item>
+    <layout class="QVBoxLayout" name="pickLayout"/>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">
