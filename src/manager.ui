@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>414</width>
-    <height>348</height>
+    <width>449</width>
+    <height>363</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,15 +16,21 @@
   <property name="styleSheet">
    <string notr="true"/>
   </property>
-  <layout class="QHBoxLayout" name="horizontalLayout_4">
+  <layout class="QVBoxLayout" name="verticalLayout">
    <item>
     <widget class="QGroupBox" name="colorBoxWidget">
+     <property name="minimumSize">
+      <size>
+       <width>0</width>
+       <height>280</height>
+      </size>
+     </property>
      <property name="title">
       <string>Color chooser</string>
      </property>
      <layout class="QVBoxLayout" name="verticalLayout_3">
       <item>
-       <layout class="QHBoxLayout" name="horizontalLayout">
+       <layout class="QHBoxLayout" name="inputLayout">
         <item>
          <widget class="QLineEdit" name="colorControl">
           <property name="placeholderText">
@@ -44,8 +50,17 @@
       <item>
        <layout class="QVBoxLayout" name="colorBoxLayout"/>
       </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QGroupBox" name="savedColorBoxWidget">
+     <property name="title">
+      <string>Saved Colors</string>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_4">
       <item>
-       <layout class="QHBoxLayout" name="previewLayout"/>
+       <layout class="QVBoxLayout" name="savedColorsBoxLayout"/>
       </item>
      </layout>
     </widget>
