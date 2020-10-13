@@ -3,6 +3,7 @@
 #include <QUuid>
 #include <QRegularExpression>
 
+
 utils::utils(QObject *parent) : QObject(parent)
 {
     setParent(parent);
@@ -149,12 +150,18 @@ QString utils::convertSectoDay(qint64 secs)
 //static on demand path maker
 QString utils::returnPath(QString pathname)
 {
+
+    auto sepe = QDir::separator();
     QString _data_path = QStandardPaths::writableLocation(QStandardPaths::DataLocation);
-    if(!QDir(_data_path+"/"+pathname).exists()){
-        QDir d(_data_path+"/"+pathname);
-        d.mkpath(_data_path+"/"+pathname);
+    if(!QDir(_data_path).exists()){
+        QDir d;
+        d.mkpath(_data_path);
     }
-    return _data_path+"/"+pathname+"/";
+    if(!QDir(_data_path+sepe+pathname).exists()){
+        QDir d(_data_path+sepe+pathname);
+        d.mkpath(_data_path+sepe+pathname);
+    }
+    return _data_path+sepe+pathname+sepe;
 }
 
 
@@ -327,3 +334,23 @@ QString utils::randomIpV6()
    return randomString.trimmed().simplified().remove(" ");
 }
 
+
+void utils::saveJson(QJsonDocument document, QString fileName)
+{
+    QFile jsonFile(fileName);
+    jsonFile.open(QFile::WriteOnly);
+    jsonFile.write(document.toJson());
+    jsonFile.close();
+}
+
+QJsonDocument utils::loadJson(QString fileName)
+{
+    QFile jsonFile(fileName);
+    if(jsonFile.open(QFile::ReadOnly)){
+        QJsonDocument d = QJsonDocument().fromJson(jsonFile.readAll());
+        jsonFile.close();
+        return d;
+    }else{
+        return QJsonDocument();
+    }
+}

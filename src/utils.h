@@ -7,6 +7,8 @@
 #include <QStandardPaths>
 #include <QDir>
 #include <QTextDocument>
+#include <QJsonDocument>
+
 
 class utils : public QObject
 {
@@ -83,6 +85,8 @@ public slots:
     static bool isImage(QString filename);
     static QString cleanString(QString input);
     static QString genRand(int length);
+    static void saveJson(QJsonDocument document, QString fileName);
+    static QJsonDocument loadJson(QString fileName);
 
 
 
