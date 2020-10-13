@@ -4,7 +4,6 @@
 #include <QDesktopServices>
 #include <QUrl>
 #include <QSplitter>
-#include <requestinterceptor.h>
 
 MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     QMainWindow(parent),
@@ -15,12 +14,6 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     home = serverBase;
     this->setWindowIcon(QIcon(":/icons/icon-256.png"));
     this->setWindowTitle(qApp->applicationName()+" v"+qApp->applicationVersion());
-
-//    ui->webView->setStyleSheet("background-color:#181818;");
-
-    connect(ui->webView,&QWebEngineView::urlChanged,[=](const QUrl url){
-        qDebug()<<url.toString();
-    });
 
     connect(ui->webView,&QWebEngineView::loadFinished,[=](const bool loaded){
         if(loaded && !app_init){
@@ -35,19 +28,16 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     weProfile->setHttpUserAgent("Mozilla/5.0 (X11; Ubuntu; Linux x86_64; rv:72.0) Gecko/20100101 Firefox/72.0");
     weProfile->setPersistentCookiesPolicy(QWebEngineProfile::ForcePersistentCookies);
 
-    WebEnginePage *webenginepage = new WebEnginePage(weProfile, this);
-//    webenginepage->setBackgroundColor(QColor("#181818"));
+    QWebEnginePage *webenginepage = new QWebEnginePage(weProfile, this);
+//  webenginepage->setBackgroundColor(QColor("#181818"));
 
-    connect(webenginepage,&WebEnginePage::titleChanged,[=](const QString titleStr){
+    connect(webenginepage,&QWebEnginePage::titleChanged,[=](const QString titleStr){
         this->setWindowTitle(QApplication::applicationName()+" | "+QString(titleStr));
         QString hex6 = QString(titleStr).split(">>").last().simplified().trimmed();
         QColor color("#"+hex6);
         if(color.isValid())
             managerWidget->setFromHex6("#"+hex6);
     });
-
-//    RequestInterceptor *interceptor = new RequestInterceptor(weProfile);
-//    weProfile->setUrlRequestInterceptor(interceptor);
 
     webenginepage->settings()->setAttribute(QWebEngineSettings::ShowScrollBars,false);
 
@@ -62,7 +52,6 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
 
     managerWidget = new Manager(this);
     managerWidget->setMinimumSize(350,managerWidget->minimumSizeHint().height());
-    managerWidget->setStyleSheet("QWidget{background-image:url(:/html/texture.png)}");
 
     managerWidget->initialize(initColor);
     connect(managerWidget,&Manager::colorChanged,[=](QString colorName){
@@ -77,13 +66,11 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     split1->setStretchFactor(0,2);
     split1->setStretchFactor(1,2);
     ui->centralWidget->layout()->addWidget(split1);
-
-
     if(settings.value("geometry").isValid()){
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
     }
-
+    ui->webView->layout()->setContentsMargins(9,0,0,0);
     ui->webView->load(serverBase+"/v2.html");
 }
 void MainWindow::loadColor(QString colorStr)
@@ -99,6 +86,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings.setValue("geometry",saveGeometry());
     settings.setValue("windowState", saveState());
+    managerWidget->saveColors();
     QMainWindow::closeEvent(event);
 }
 
