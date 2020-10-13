@@ -1,8 +1,8 @@
 name: colorpie
 version: '1' 
-summary: Simple Desktop GIF recorder for Linux  
+summary: Color Picker and Converter 
 description: |
-  Powerful yet simple Desktop GIF recorder.
+  ColorPie is professional color management utility written in Qt.
 
 grade: stable  
 confinement: strict
