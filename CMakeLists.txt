@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.21)
 
 project(colorpie
-    VERSION 2.0
+    VERSION 2.1
     DESCRIPTION "Color picker and converter"
     HOMEPAGE_URL "https://github.com/keshavbhatt/ColorPie"
     LANGUAGES CXX

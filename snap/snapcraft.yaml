@@ -1,6 +1,6 @@
 name: colorpie
 base: core24
-version: '2.0'
+version: '2.1'
 summary: Color Picker and Converter
 description: |
   ColorPie is a professional color management utility written in Qt.
