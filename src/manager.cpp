@@ -71,6 +71,13 @@ Manager::Manager(QWidget *parent) :
     ui->colorBoxLayout->addWidget(colorDialog);
     ui->savedColorsBoxLayout->addWidget(colorListWidget);
 
+    if (settings.value("managerSplitterState").isValid())
+        ui->managerSplitter->restoreState(
+            settings.value("managerSplitterState").toByteArray());
+    // Persist on every drag too, so adjustments survive unclean exits.
+    connect(ui->managerSplitter, &QSplitter::splitterMoved,
+            this, &Manager::saveSettings);
+
     loadColors();
 }
 
@@ -119,6 +126,11 @@ void Manager::on_supportedInputs_clicked()
     sup->setWindowTitle(QApplication::applicationName()+" | "+"Supported Input");
     sup->setAttribute(Qt::WA_DeleteOnClose);
     sup->show();
+}
+
+void Manager::saveSettings()
+{
+    settings.setValue("managerSplitterState", ui->managerSplitter->saveState());
 }
 
 void Manager::saveColors()

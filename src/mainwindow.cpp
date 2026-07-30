@@ -57,19 +57,25 @@ MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
         loadColor(colorName);
     });
 
-    QSplitter *split1 = new QSplitter;
-    split1->setObjectName("split1");
-    split1->setOrientation(Qt::Horizontal);
-    split1->setChildrenCollapsible(false);
-    split1->addWidget(managerWidget);
-    split1->addWidget(ui->webviewWidget);
-    split1->setStretchFactor(0,2);
-    split1->setStretchFactor(1,2);
-    ui->centralWidget->layout()->addWidget(split1);
+    splitter = new QSplitter;
+    splitter->setObjectName("split1");
+    splitter->setOrientation(Qt::Horizontal);
+    splitter->setChildrenCollapsible(false);
+    splitter->addWidget(managerWidget);
+    splitter->addWidget(ui->webviewWidget);
+    splitter->setStretchFactor(0,2);
+    splitter->setStretchFactor(1,2);
+    ui->centralWidget->layout()->addWidget(splitter);
     if(settings.value("geometry").isValid()){
         restoreGeometry(settings.value("geometry").toByteArray());
         restoreState(settings.value("windowState").toByteArray());
     }
+    if(settings.value("splitterState").isValid())
+        splitter->restoreState(settings.value("splitterState").toByteArray());
+    // Persist on every drag too, so adjustments survive unclean exits.
+    connect(splitter, &QSplitter::splitterMoved, this, [this]{
+        settings.setValue("splitterState", splitter->saveState());
+    });
     ui->webviewWidget->layout()->setContentsMargins(9,0,0,0);
     ui->webView->load(QUrl(serverBase));
 }
@@ -87,6 +93,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
 {
     settings.setValue("geometry",saveGeometry());
     settings.setValue("windowState", saveState());
+    settings.setValue("splitterState", splitter->saveState());
+    managerWidget->saveSettings();
     managerWidget->saveColors();
     QMainWindow::closeEvent(event);
 }

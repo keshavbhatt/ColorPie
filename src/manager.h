@@ -30,6 +30,7 @@ public slots:
     void initialize(QColor color);
     void setFromHex6(QString hex6);
     void saveColors();
+    void saveSettings();
 
 private slots:
     void on_colorControl_textChanged(const QString &arg1);

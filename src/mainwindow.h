@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include <QSettings>
+#include <QSplitter>
 
 #include "manager.h"
 
@@ -30,6 +31,7 @@ private:
     QSettings settings;
     bool app_init = false;
     Manager *managerWidget = nullptr;
+    QSplitter *splitter = nullptr;
     QColor initColor;
 };
 
