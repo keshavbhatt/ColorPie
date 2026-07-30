@@ -55,6 +55,8 @@ public:
 
 Q_SIGNALS:
     void colorsChanged(const QList<QColor>&);
+    /// Emitted when the user clicks one of the saved color swatches
+    void colorClicked(const QColor &color);
     void wheelShapeChanged(ColorWheel::ShapeEnum shape);
     void colorSpaceChanged(ColorWheel::ColorSpaceEnum space);
     void wheelRotatingChanged(bool rotating);
@@ -67,7 +69,7 @@ public Q_SLOTS:
 private Q_SLOTS:
     void emit_changed();
     void handle_removed(int);
-    void color_changed(int row);
+    void color_clicked(int row);
 
 private:
     class Private;

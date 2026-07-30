@@ -132,6 +132,13 @@ Q_SIGNALS:
 
     void alphaEnabledChanged(bool alphaEnabled);
 
+    /**
+     * The user asked to pick a color from the screen. Picking is delegated
+     * to the application (e.g. via the XDG desktop portal, which works on
+     * Wayland); feed the result back with setColor().
+     */
+    void screenColorPickRequested();
+
 private Q_SLOTS:
     /// Update all the Ui elements to match the selected color
     void setColorInternal(const QColor &color);
@@ -150,8 +157,6 @@ private Q_SLOTS:
 protected:
     void dragEnterEvent(QDragEnterEvent *event);
     void dropEvent(QDropEvent * event);
-    void mouseReleaseEvent(QMouseEvent *event);
-    void mouseMoveEvent(QMouseEvent *event);
 
 private:
     class Private;

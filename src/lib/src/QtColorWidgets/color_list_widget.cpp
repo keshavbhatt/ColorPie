@@ -20,7 +20,7 @@
  *
  */
 #include "QtColorWidgets/color_list_widget.hpp"
-#include "QtColorWidgets/color_selector.hpp"
+#include "QtColorWidgets/color_preview.hpp"
 
 namespace color_widgets {
 
@@ -40,7 +40,7 @@ ColorListWidget::ColorListWidget(QWidget *parent)
 {
     connect(this, &AbstractWidgetList::removed, this, &ColorListWidget::handle_removed);
     // Qt 6 replaced QSignalMapper::mapped(int) with mappedInt(int).
-    connect(&p->mapper, &QSignalMapper::mappedInt, this, &ColorListWidget::color_changed);
+    connect(&p->mapper, &QSignalMapper::mappedInt, this, &ColorListWidget::color_clicked);
 }
 
 ColorListWidget::~ColorListWidget()
@@ -69,13 +69,14 @@ void ColorListWidget::setColors(const QList<QColor> &colors)
 
 void ColorListWidget::swap(int a, int b)
 {
-    ColorSelector* sa = widget_cast<ColorSelector>(a);
-    ColorSelector* sb = widget_cast<ColorSelector>(b);
+    ColorPreview* sa = widget_cast<ColorPreview>(a);
+    ColorPreview* sb = widget_cast<ColorPreview>(b);
     if ( sa && sb )
     {
         QColor ca = sa->color();
         sa->setColor(sb->color());
         sb->setColor(ca);
+        p->colors.swapItemsAt(a, b);
         Q_EMIT colorsChanged(p->colors);
     }
 }
@@ -98,29 +99,22 @@ void ColorListWidget::handle_removed(int i)
     Q_EMIT colorsChanged(p->colors);
 }
 
-void ColorListWidget::color_changed(int row)
+void ColorListWidget::color_clicked(int row)
 {
-    ColorSelector *cs = widget_cast<ColorSelector>(row);
-    if ( cs )
-    {
-        p->colors[row] = cs->color();
-        Q_EMIT colorsChanged(p->colors);
-    }
+    if ( row >= 0 && row < p->colors.size() )
+        Q_EMIT colorClicked(p->colors[row]);
 }
 
 void ColorListWidget::append_widget(int col)
 {
-    ColorSelector* cbs = new ColorSelector;
+    // Plain previews rather than ColorSelector: clicking a saved swatch
+    // loads the color (via colorClicked) instead of opening an edit dialog.
+    ColorPreview* cbs = new ColorPreview;
     cbs->setDisplayMode(ColorPreview::AllAlpha);
     cbs->setColor(p->colors[col]);
-    //connect(cbs,SIGNAL(colorChanged(QColor)),SLOT(emit_changed()));
     p->mapper.setMapping(cbs,col);
-    connect(cbs,SIGNAL(colorChanged(QColor)),&p->mapper,SLOT(map()));
-    connect(this, &ColorListWidget::wheelRotatingChanged, cbs, &ColorSelector::setWheelRotating);
-    connect(this, &ColorListWidget::wheelShapeChanged, cbs, &ColorSelector::setWheelShape);
-    connect(this, &ColorListWidget::colorSpaceChanged, cbs, &ColorSelector::setColorSpace);
+    connect(cbs,&ColorPreview::clicked,&p->mapper,qOverload<>(&QSignalMapper::map));
     appendWidget(cbs);
-    //setRowHeight(count()-1,22);
 }
 
 void ColorListWidget::setWheelShape(ColorWheel::ShapeEnum shape)

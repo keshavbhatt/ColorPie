@@ -9,6 +9,8 @@
 #include "QtColorWidgets/ColorListWidget"
 #include "QtColorWidgets/ColorPreview"
 
+#include "screenpicker.h"
+
 namespace Ui {
 class Manager;
 }
@@ -42,6 +44,7 @@ private:
 
     color_widgets::ColorDialog *colorDialog = nullptr;
     color_widgets::ColorListWidget *colorListWidget = nullptr;
+    ScreenPicker *screenPicker = nullptr;
 
     QList<QColor> colorCollection;
     QSettings settings;

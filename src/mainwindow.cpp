@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QFile>
 #include <QSplitter>
 #include <QUrl>
 #include <QWebEnginePage>
@@ -47,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
     weProfile->setParent(webenginepage);
 
     ui->webView->setPage(webenginepage);
-    setStyle(":/light.qss");
 
     ui->webView->setMinimumSize(500,500);
 
@@ -62,6 +60,7 @@ MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
     QSplitter *split1 = new QSplitter;
     split1->setObjectName("split1");
     split1->setOrientation(Qt::Horizontal);
+    split1->setChildrenCollapsible(false);
     split1->addWidget(managerWidget);
     split1->addWidget(ui->webviewWidget);
     split1->setStretchFactor(0,2);
@@ -90,16 +89,6 @@ void MainWindow::closeEvent(QCloseEvent *event)
     settings.setValue("windowState", saveState());
     managerWidget->saveColors();
     QMainWindow::closeEvent(event);
-}
-
-void MainWindow::setStyle(const QString &fname)
-{
-    QFile styleSheet(fname);
-    if (!styleSheet.open(QIODevice::ReadOnly)) {
-        qWarning("Unable to open stylesheet %s", qUtf8Printable(fname));
-        return;
-    }
-    qApp->setStyleSheet(styleSheet.readAll());
 }
 
 MainWindow::~MainWindow()

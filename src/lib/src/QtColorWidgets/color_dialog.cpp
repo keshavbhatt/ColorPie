@@ -29,8 +29,6 @@
 #include <QPushButton>
 #include <QScreen>
 
-#include "QtColorWidgets/color_utils.hpp"
-
 namespace color_widgets {
 
 class ColorDialog::Private
@@ -38,11 +36,10 @@ class ColorDialog::Private
 public:
     Ui_ColorDialog ui;
     ButtonMode button_mode;
-    bool pick_from_screen;
     bool alpha_enabled;
     QColor color;
 
-    Private() : pick_from_screen(false), alpha_enabled(true)
+    Private() : alpha_enabled(true)
     {}
 
 };
@@ -61,8 +58,7 @@ ColorDialog::ColorDialog(QWidget *parent, Qt::WindowFlags f) :
     pickButton->setIcon(QIcon(":/color_widgets/drop-line.png"));
 
     connect(pickButton,&QPushButton::clicked,[=](){
-        grabMouse(Qt::CrossCursor);
-        p->pick_from_screen = true;
+        Q_EMIT screenColorPickRequested();
     });
 
     setButtonMode(OkApplyCancel);
@@ -286,8 +282,7 @@ void ColorDialog::on_buttonBox_clicked(QAbstractButton *btn)
 
     case QDialogButtonBox::ActionRole:
         // Currently, the only action button is the "pick color" button
-        grabMouse(Qt::CrossCursor);
-        p->pick_from_screen = true;
+        Q_EMIT screenColorPickRequested();
         break;
 
     case QDialogButtonBox::ResetRole:
@@ -322,24 +317,6 @@ void ColorDialog::dropEvent(QDropEvent *event)
             setColorInternal(col);
             event->accept();
         }
-    }
-}
-
-void ColorDialog::mouseReleaseEvent(QMouseEvent *event)
-{
-    if (p->pick_from_screen)
-    {
-        setColorInternal(utils::get_screen_color(event->globalPos()));
-        p->pick_from_screen = false;
-        releaseMouse();
-    }
-}
-
-void ColorDialog::mouseMoveEvent(QMouseEvent *event)
-{
-    if (p->pick_from_screen)
-    {
-        setColorInternal(utils::get_screen_color(event->globalPos()));
     }
 }
 

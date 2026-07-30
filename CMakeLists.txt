@@ -31,6 +31,7 @@ find_package(Qt6 6.8 REQUIRED COMPONENTS
     Gui
     Widgets
     Network
+    DBus
     HttpServer
     WebEngineWidgets
     WebEngineCore
@@ -80,13 +81,14 @@ add_executable(${APP_EXECUTABLE_NAME}
     src/manager.cpp
     src/manager.h
     src/manager.ui
+    src/screenpicker.cpp
+    src/screenpicker.h
     src/supportedinputs.cpp
     src/supportedinputs.h
     src/supportedinputs.ui
     src/utils.cpp
     src/utils.h
     src/resources.qrc
-    src/breeze.qrc
 )
 
 target_compile_definitions(${APP_EXECUTABLE_NAME} PRIVATE
@@ -100,6 +102,7 @@ target_link_libraries(${APP_EXECUTABLE_NAME} PRIVATE
     Qt6::Gui
     Qt6::Widgets
     Qt6::Network
+    Qt6::DBus
     Qt6::HttpServer
     Qt6::WebEngineWidgets
     Qt6::WebEngineCore

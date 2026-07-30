@@ -2,10 +2,12 @@
 #include "ui_manager.h"
 
 #include <QApplication>
+#include <QDebug>
 #include <QGridLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
 #include <QJsonValue>
+#include <QPushButton>
 
 #include "supportedinputs.h"
 #include "utils.h"
@@ -25,9 +27,23 @@ Manager::Manager(QWidget *parent) :
         colorCollection = colorList;
     });
 
+    // Clicking a saved swatch loads it as the current color.
+    connect(colorListWidget, &ColorListWidget::colorClicked, colorDialog,
+            [=](const QColor &color) { colorDialog->setColor(color); });
+
     colorDialog->layout()->setContentsMargins(0,0,0,0);
     colorDialog->setButtonMode(ColorDialog::NoButton);
     colorDialog->setPreviewDisplayMode(ColorPreview::AllAlpha);
+
+    // The saved-color swatches and the web view already preview the current
+    // color; the strip below the wheel is redundant.
+    if (auto *preview = colorDialog->findChild<ColorPreview *>("preview"))
+        preview->hide();
+
+    // Move the dialog's "Pick" button up into the input row, before the
+    // "Supported inputs" button.
+    if (auto *pickButton = colorDialog->findChild<QPushButton *>("picker"))
+        ui->inputLayout->insertWidget(1, pickButton);
 
     //gridLayout modifications
     QGridLayout *gridLayout = colorDialog->findChild<QGridLayout*>("gridLayout");
@@ -41,6 +57,16 @@ Manager::Manager(QWidget *parent) :
         Q_EMIT colorChanged(color.name());
         colorListWidget->setColor(color);
     });
+
+    // Screen color picking goes through the XDG desktop portal so it works
+    // on Wayland as well as X11.
+    screenPicker = new ScreenPicker(this);
+    connect(colorDialog, &ColorDialog::screenColorPickRequested,
+            screenPicker, &ScreenPicker::pickColor);
+    connect(screenPicker, &ScreenPicker::colorPicked, colorDialog,
+            [=](const QColor &color) { colorDialog->setColor(color); });
+    connect(screenPicker, &ScreenPicker::errorOccurred, this,
+            [](const QString &message) { qWarning() << message; });
 
     ui->colorBoxLayout->addWidget(colorDialog);
     ui->savedColorsBoxLayout->addWidget(colorListWidget);

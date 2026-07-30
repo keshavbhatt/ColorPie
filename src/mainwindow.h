@@ -22,7 +22,6 @@ protected:
     void closeEvent(QCloseEvent *event) override;
 
 private slots:
-    void setStyle(const QString &fname);
     void loadColor(const QString &colorStr);
 
 private:
