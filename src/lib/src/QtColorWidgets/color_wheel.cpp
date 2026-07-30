@@ -301,7 +301,7 @@ void ColorWheel::setColorSpace(color_widgets::ColorWheel::ColorSpaceEnum space)
                 p->hue = old_col.hsvHueF();
                 p->sat = old_col.hsvSaturationF();
                 p->val = old_col.valueF();
-                p->color_from = &QColor::fromHsvF;
+                p->color_from = &color_from_hsvF;
                 p->rainbow_from_hue = &utils::rainbow_hsv;
                 break;
             case ColorLCH:

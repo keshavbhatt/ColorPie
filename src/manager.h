@@ -1,23 +1,13 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QWidget>
-#include <QSettings>
-#include <QMessageBox>
 #include <QLayoutItem>
+#include <QSettings>
+#include <QWidget>
 
-#include <QJsonArray>
-#include <QJsonObject>
-#include <QJsonDocument>
-#include <QJsonValue>
-
-#include "QtColorWidgets/color_line_edit.hpp"
-#include "QtColorWidgets/ColorPreview"
 #include "QtColorWidgets/ColorDialog"
 #include "QtColorWidgets/ColorListWidget"
-
-#include "utils.h"
-#include "supportedinputs.h"
+#include "QtColorWidgets/ColorPreview"
 
 namespace Ui {
 class Manager;
@@ -46,17 +36,15 @@ private slots:
 
     void setLayoutVisible(QLayoutItem *item, bool visible);
     void loadColors();
+
 private:
     Ui::Manager *ui;
 
-
-    color_widgets::ColorLineEdit *colorLineEdit = nullptr;
-    color_widgets::ColorDialog * colorDialog = nullptr;
-    color_widgets::ColorListWidget * colorListWidget = nullptr;
+    color_widgets::ColorDialog *colorDialog = nullptr;
+    color_widgets::ColorListWidget *colorListWidget = nullptr;
 
     QList<QColor> colorCollection;
     QSettings settings;
-
 };
 
 #endif // MANAGER_H

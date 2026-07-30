@@ -37,6 +37,13 @@ enum MouseStatus
     DragSquare
 };
 
+// Qt 6 changed QColor::fromHsvF() parameters from qreal to float; keep the
+// qreal-based function pointer signature via this wrapper.
+inline QColor color_from_hsvF(qreal h, qreal s, qreal v, qreal a)
+{
+    return QColor::fromHsvF(h, s, v, a);
+}
+
 class ColorWheel::Private
 {
 private:
@@ -60,7 +67,7 @@ public:
     Private(ColorWheel *widget)
         : w(widget), hue(0), sat(0), val(0),
         wheel_width(20), mouse_status(Nothing),
-        color_from(&QColor::fromHsvF), rainbow_from_hue(&utils::rainbow_hsv)
+        color_from(&color_from_hsvF), rainbow_from_hue(&utils::rainbow_hsv)
     {
     }
 

@@ -39,7 +39,8 @@ ColorListWidget::ColorListWidget(QWidget *parent)
     : AbstractWidgetList(parent), p(new Private)
 {
     connect(this, &AbstractWidgetList::removed, this, &ColorListWidget::handle_removed);
-    connect(&p->mapper, SIGNAL(mapped(int)), SLOT(color_changed(int)));
+    // Qt 6 replaced QSignalMapper::mapped(int) with mappedInt(int).
+    connect(&p->mapper, &QSignalMapper::mappedInt, this, &ColorListWidget::color_changed);
 }
 
 ColorListWidget::~ColorListWidget()

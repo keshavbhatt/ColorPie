@@ -1,66 +1,40 @@
 name: colorpie
-version: '1' 
-summary: Color Picker and Converter 
+base: core24
+version: '2.0'
+summary: Color Picker and Converter
 description: |
-  ColorPie is professional color management utility written in Qt.
+  ColorPie is a professional color management utility written in Qt.
 
-grade: stable  
+grade: stable
 confinement: strict
 icon: snap/gui/icon.png
-base: core18
 
-architectures:
-  - build-on: amd64
-    run-on: amd64  
+platforms:
+  amd64:
+  arm64:
 
 apps:
   colorpie:
-    command: desktop-launch colorpie
-    environment:
-       DISABLE_WAYLAND: 1
-       QT_QPA_PLATFORMTHEME: gtk3 
+    command: usr/bin/colorpie
+    extensions: [kde-neon-6]
     desktop: usr/share/applications/colorpie.desktop
+    environment:
+      # Chromium's own sandbox cannot start inside strict snap confinement;
+      # the snap confinement itself provides the isolation.
+      QTWEBENGINE_DISABLE_SANDBOX: "1"
     plugs:
-        - browser-support
-        - desktop
-        - desktop-legacy
-        - gsettings
-        - home
-        - opengl
-        - removable-media
-        - unity7
-        - x11
-        - mount-observe
-        - network
-        - network-control
-        - network-observe
-        - network-bind
-        - wayland
-plugs:
-  gtk-3-themes:
-    interface: content
-    target: $SNAP/data-dir/themes
-    default-provider: gtk-common-themes
-  icon-themes:
-    interface: content
-    target: $SNAP/data-dir/icons
-    default-provider: gtk-common-themes
-  sound-themes:
-    interface: content
-    target: $SNAP/data-dir/sounds
-    default-provider: gtk-common-themes
-  qt513:
-    interface: content
-    target: $SNAP/qt513
-    default-provider: qt513
+      - browser-support
+      - opengl
+      - wayland
+      - x11
 
 parts:
-  snap-launcher:
-     plugin: dump
-     source: snap_launcher/
-     override-build: |
-            snapcraftctl build
-            sed -i 's|Icon=.*|Icon=${SNAP}/meta/gui/icon.png|g' ${SNAPCRAFT_PART_SRC}/colorpie.desktop
-            
-            mkdir -p ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/
-            cp -rf ${SNAPCRAFT_PART_SRC}/colorpie.desktop ${SNAPCRAFT_PART_INSTALL}/usr/share/applications/colorpie.desktop
+  application:
+    plugin: cmake
+    source: .
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+      - -DCMAKE_BUILD_TYPE=Release
+    override-build: |
+      craftctl default
+      sed -i 's|^Icon=.*|Icon=${SNAP}/usr/share/icons/hicolor/512x512/apps/colorpie.png|' ${CRAFT_PART_INSTALL}/usr/share/applications/colorpie.desktop

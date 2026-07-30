@@ -503,8 +503,8 @@ QSize GradientEditor::sizeHint() const
         std::swap(w, h);
     }
     QSlider s;
-    return style()->sizeFromContents(QStyle::CT_Slider, &opt, QSize(w, h), &s)
-        .expandedTo(QApplication::globalStrut());
+    // Qt 6 removed QApplication::globalStrut() (it was always QSize(0,0) by then).
+    return style()->sizeFromContents(QStyle::CT_Slider, &opt, QSize(w, h), &s);
 }
 
 int GradientEditor::selectedStop() const

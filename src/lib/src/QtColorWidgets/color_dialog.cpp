@@ -25,7 +25,6 @@
 
 #include <QDropEvent>
 #include <QDragEnterEvent>
-#include <QDesktopWidget>
 #include <QMimeData>
 #include <QPushButton>
 #include <QScreen>

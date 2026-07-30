@@ -1,6 +1,15 @@
 #include "manager.h"
 #include "ui_manager.h"
 
+#include <QApplication>
+#include <QGridLayout>
+#include <QJsonArray>
+#include <QJsonDocument>
+#include <QJsonValue>
+
+#include "supportedinputs.h"
+#include "utils.h"
+
 using namespace color_widgets;
 
 Manager::Manager(QWidget *parent) :
@@ -93,13 +102,13 @@ void Manager::saveColors()
         dataArray.append(QJsonValue(color.name()));
     }
     QJsonDocument doc(dataArray);
-    QString filepath = utils::returnPath("savedColors")+QDir::separator()+"colors.json";
+    QString filepath = utils::returnPath("savedColors")+"colors.json";
     utils::saveJson(doc,filepath);
 }
 
 void Manager::loadColors()
 {
-    QString filepath = utils::returnPath("savedColors")+QDir::separator()+"colors.json";
+    QString filepath = utils::returnPath("savedColors")+"colors.json";
     QJsonDocument doc = utils::loadJson(filepath);
     if(doc.isNull()==false){
         QJsonArray dataArray = doc.array();

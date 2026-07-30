@@ -1,11 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 
-#include <QDesktopServices>
-#include <QUrl>
+#include <QFile>
 #include <QSplitter>
+#include <QUrl>
+#include <QWebEnginePage>
+#include <QWebEngineProfile>
+#include <QWebEngineSettings>
+#include <QWebEngineView>
 
-MainWindow::MainWindow(QWidget *parent,QString serverBase) :
+MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
@@ -15,7 +19,7 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     this->setWindowIcon(QIcon(":/icons/icon-256.png"));
     this->setWindowTitle(qApp->applicationName()+" v"+qApp->applicationVersion());
 
-    connect(ui->webView,&QWebEngineView::loadFinished,[=](const bool loaded){
+    connect(ui->webView,&QWebEngineView::loadFinished,this,[=](const bool loaded){
         if(loaded && !app_init){
             loadColor(initColor.name());
             managerWidget->setFromHex6(initColor.name());
@@ -28,9 +32,9 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     QWebEnginePage *webenginepage = new QWebEnginePage(weProfile, this);
     webenginepage->setBackgroundColor(QColor("#EFF0F1"));
 
-    connect(webenginepage,&QWebEnginePage::titleChanged,[=](const QString titleStr){
-        this->setWindowTitle(QApplication::applicationName()+" | "+QString(titleStr));
-        QString hex6 = QString(titleStr).split(">>").last().simplified().trimmed();
+    connect(webenginepage,&QWebEnginePage::titleChanged,this,[=](const QString &titleStr){
+        this->setWindowTitle(QApplication::applicationName()+" | "+titleStr);
+        QString hex6 = titleStr.split(">>").last().simplified().trimmed();
         QColor color("#"+hex6);
         if(color.isValid())
             managerWidget->setFromHex6("#"+hex6);
@@ -51,7 +55,7 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     managerWidget->setMinimumSize(350,managerWidget->minimumSizeHint().height());
 
     managerWidget->initialize(initColor);
-    connect(managerWidget,&Manager::colorChanged,[=](QString colorName){
+    connect(managerWidget,&Manager::colorChanged,this,[=](const QString &colorName){
         loadColor(colorName);
     });
 
@@ -70,7 +74,8 @@ MainWindow::MainWindow(QWidget *parent,QString serverBase) :
     ui->webviewWidget->layout()->setContentsMargins(9,0,0,0);
     ui->webView->load(QUrl(serverBase));
 }
-void MainWindow::loadColor(QString colorStr)
+
+void MainWindow::loadColor(const QString &colorStr)
 {
     QString js = "document.getElementById('color').value = '"+colorStr+"';"
                  "var event = new Event('keyup');"
@@ -87,18 +92,17 @@ void MainWindow::closeEvent(QCloseEvent *event)
     QMainWindow::closeEvent(event);
 }
 
-void MainWindow::setStyle(QString fname)
+void MainWindow::setStyle(const QString &fname)
 {
     QFile styleSheet(fname);
     if (!styleSheet.open(QIODevice::ReadOnly)) {
-        qWarning("Unable to open file");
-    return; }
+        qWarning("Unable to open stylesheet %s", qUtf8Printable(fname));
+        return;
+    }
     qApp->setStyleSheet(styleSheet.readAll());
-    styleSheet.close();
 }
 
 MainWindow::~MainWindow()
 {
     delete ui;
 }
-

@@ -1,11 +1,11 @@
 [Desktop Entry]
 Version=1.0
-GenericName=ColorPie
-Name=ColorPie
 Type=Application
-Icon=${SNAP}/meta/gui/icon.png
+Name=@APP_NAME@
+GenericName=Color Picker
+Comment=@PROJECT_DESCRIPTION@
+Icon=@APP_EXECUTABLE_NAME@
+Exec=@APP_EXECUTABLE_NAME@ %F
 Keywords=Color Picker;converter;gcolor;color;colour
-Exec=colorpie %F
 Categories=Utility;Qt;
 Terminal=false
-Name[en_US]=ColorPie

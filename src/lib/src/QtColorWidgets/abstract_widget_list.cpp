@@ -39,9 +39,13 @@ public:
 AbstractWidgetList::AbstractWidgetList(QWidget *parent) :
     QWidget(parent), p(new Private)
 {
-    connect(&p->mapper_up,SIGNAL(mapped(QWidget*)),SLOT(up_clicked(QWidget*)));
-    connect(&p->mapper_down,SIGNAL(mapped(QWidget*)),SLOT(down_clicked(QWidget*)));
-    connect(&p->mapper_remove,SIGNAL(mapped(QWidget*)),SLOT(remove_clicked(QWidget*)));
+    // Qt 6 replaced QSignalMapper::mapped(QWidget*) with mappedObject(QObject*).
+    connect(&p->mapper_up, &QSignalMapper::mappedObject, this,
+            [this](QObject *w) { up_clicked(static_cast<QWidget *>(w)); });
+    connect(&p->mapper_down, &QSignalMapper::mappedObject, this,
+            [this](QObject *w) { down_clicked(static_cast<QWidget *>(w)); });
+    connect(&p->mapper_remove, &QSignalMapper::mappedObject, this,
+            [this](QObject *w) { remove_clicked(static_cast<QWidget *>(w)); });
 
 
     QVBoxLayout *verticalLayout = new QVBoxLayout(this);

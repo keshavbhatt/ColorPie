@@ -22,7 +22,6 @@
 #include "QtColorWidgets/color_utils.hpp"
 
 #include <QScreen>
-#include <QDesktopWidget>
 #include <QApplication>
 
 
@@ -85,9 +84,11 @@ QColor color_widgets::utils::color_from_hsl(qreal hue, qreal sat, qreal lig, qre
 QColor color_widgets::utils::get_screen_color(const QPoint &global_pos)
 {
     QScreen *screen = QApplication::screenAt(global_pos);
+    if ( !screen )
+        screen = QApplication::primaryScreen();
 
-    WId wid = QApplication::desktop()->winId();
-    QImage img = screen->grabWindow(wid, global_pos.x(), global_pos.y(), 1, 1).toImage();
+    const QPoint pos = global_pos - screen->geometry().topLeft();
+    QImage img = screen->grabWindow(0, pos.x(), pos.y(), 1, 1).toImage();
 
     return img.pixel(0,0);
 }
