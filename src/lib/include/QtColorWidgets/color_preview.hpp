@@ -77,6 +77,10 @@ public:
 
     void paint(QPainter &painter, QRect rect) const;
 
+    /// Whether a selection highlight frame is drawn around the preview
+    bool isSelected() const;
+    void setSelected(bool selected);
+
     /// Whether to draw a frame around the color
     bool drawFrame() const;
     void setDrawFrame(bool);

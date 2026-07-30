@@ -32,11 +32,13 @@ MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
     webenginepage->setBackgroundColor(QColor("#EFF0F1"));
 
     connect(webenginepage,&QWebEnginePage::titleChanged,this,[=](const QString &titleStr){
-        this->setWindowTitle(QApplication::applicationName()+" | "+titleStr);
-        QString hex6 = titleStr.split(">>").last().simplified().trimmed();
+        // The web app titles the page "<hex6> | <input system>".
+        QString hex6 = titleStr.split(">>").last().split('|').first().simplified();
         QColor color("#"+hex6);
-        if(color.isValid())
+        if(color.isValid()){
+            this->setWindowTitle(QApplication::applicationName()+" — #"+hex6);
             managerWidget->setFromHex6("#"+hex6);
+        }
     });
 
     webenginepage->settings()->setAttribute(QWebEngineSettings::ShowScrollBars,false);
@@ -47,10 +49,10 @@ MainWindow::MainWindow(QWidget *parent, const QString &serverBase) :
 
     ui->webView->setPage(webenginepage);
 
-    ui->webView->setMinimumSize(500,500);
+    ui->webView->setMinimumSize(320,320);
 
     managerWidget = new Manager(this);
-    managerWidget->setMinimumSize(350,managerWidget->minimumSizeHint().height());
+    managerWidget->setMinimumSize(300,managerWidget->minimumSizeHint().height());
 
     managerWidget->initialize(initColor);
     connect(managerWidget,&Manager::colorChanged,this,[=](const QString &colorName){

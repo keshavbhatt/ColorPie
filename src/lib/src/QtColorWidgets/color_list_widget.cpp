@@ -56,6 +56,16 @@ QList<QColor> ColorListWidget::colors() const
 void ColorListWidget::setColor(const QColor &color)
 {
     p->currentColor = color;
+    updateSelection();
+}
+
+// Highlight the saved entry matching the current color, if any.
+void ColorListWidget::updateSelection()
+{
+    int selected = p->colors.indexOf(p->currentColor);
+    for ( int i = 0; i < p->colors.size(); i++ )
+        if ( auto *preview = widget_cast<ColorPreview>(i) )
+            preview->setSelected(i == selected);
 }
 
 void ColorListWidget::setColors(const QList<QColor> &colors)
@@ -64,6 +74,7 @@ void ColorListWidget::setColors(const QList<QColor> &colors)
     p->colors = colors;
     for(int i = 0;i < colors.size();i++ )
         append_widget(i);
+    updateSelection();
     Q_EMIT colorsChanged(colors);
 }
 
@@ -83,8 +94,12 @@ void ColorListWidget::swap(int a, int b)
 
 void ColorListWidget::append()
 {
+    // Don't save duplicates; the existing entry is already highlighted.
+    if ( p->colors.contains(p->currentColor) )
+        return;
     p->colors.push_back(p->currentColor);
     append_widget(p->colors.size()-1);
+    updateSelection();
     Q_EMIT colorsChanged(p->colors);
 }
 
@@ -96,6 +111,7 @@ void ColorListWidget::emit_changed()
 void ColorListWidget::handle_removed(int i)
 {
     p->colors.removeAt(i);
+    updateSelection();
     Q_EMIT colorsChanged(p->colors);
 }
 

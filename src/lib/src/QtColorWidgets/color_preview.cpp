@@ -38,6 +38,7 @@ public:
     QBrush back;///< Background brush, visible on a transparent color
     DisplayMode display_mode; ///< How the color(s) are to be shown
     bool draw_frame = true; ///< Whether to draw a frame around the color
+    bool selected = false; ///< Whether to draw a selection highlight
 
     Private() : col(Qt::red), back(Qt::darkGray, Qt::DiagCrossPattern), display_mode(NoAlpha)
     {}
@@ -93,6 +94,20 @@ QSize ColorPreview::sizeHint() const
     return QSize(24,24);
 }
 
+bool ColorPreview::isSelected() const
+{
+    return p->selected;
+}
+
+void ColorPreview::setSelected(bool selected)
+{
+    if ( p->selected != selected )
+    {
+        p->selected = selected;
+        update();
+    }
+}
+
 void ColorPreview::paint(QPainter &painter, QRect rect) const
 {
     QColor c1, c2;
@@ -136,6 +151,14 @@ void ColorPreview::paint(QPainter &painter, QRect rect) const
     int h = rect.height();
     painter.fillRect(0, 0, w, h, c1);
     painter.fillRect(w, 0, w, h, c2);
+
+    if ( p->selected )
+    {
+        QPen pen(palette().color(QPalette::Highlight), 4);
+        painter.setPen(pen);
+        painter.setBrush(Qt::NoBrush);
+        painter.drawRect(QRect(2, 2, rect.width()-4, rect.height()-4));
+    }
 }
 
 void ColorPreview::setColor(const QColor &c)

@@ -75,6 +75,7 @@ private:
     class Private;
     Private * const p;
     void  append_widget(int col);
+    void  updateSelection();
 };
 
 } // namespace color_widgets

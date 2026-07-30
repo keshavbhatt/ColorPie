@@ -2,6 +2,7 @@
 #define MANAGER_H
 
 #include <QLayoutItem>
+#include <QPointer>
 #include <QSettings>
 #include <QWidget>
 
@@ -14,6 +15,8 @@
 namespace Ui {
 class Manager;
 }
+
+class SupportedInputs;
 
 class Manager : public QWidget
 {
@@ -39,6 +42,7 @@ private slots:
 
     void setLayoutVisible(QLayoutItem *item, bool visible);
     void loadColors();
+    void syncColorControl(const QString &text);
 
 private:
     Ui::Manager *ui;
@@ -46,6 +50,7 @@ private:
     color_widgets::ColorDialog *colorDialog = nullptr;
     color_widgets::ColorListWidget *colorListWidget = nullptr;
     ScreenPicker *screenPicker = nullptr;
+    QPointer<SupportedInputs> supportedInputsDialog;
 
     QList<QColor> colorCollection;
     QSettings settings;

@@ -6,8 +6,10 @@
 #include <QGridLayout>
 #include <QJsonArray>
 #include <QJsonDocument>
+#include <QClipboard>
 #include <QJsonValue>
 #include <QPushButton>
+#include <QShortcut>
 
 #include "supportedinputs.h"
 #include "utils.h"
@@ -42,8 +44,11 @@ Manager::Manager(QWidget *parent) :
 
     // Move the dialog's "Pick" button up into the input row, before the
     // "Supported inputs" button.
-    if (auto *pickButton = colorDialog->findChild<QPushButton *>("picker"))
+    if (auto *pickButton = colorDialog->findChild<QPushButton *>("picker")) {
+        pickButton->setToolTip(tr("Pick a color from anywhere on the screen (Ctrl+P)"));
         ui->inputLayout->insertWidget(1, pickButton);
+    }
+    ui->supportedInputs->setToolTip(tr("List of color formats the input field understands"));
 
     //gridLayout modifications
     QGridLayout *gridLayout = colorDialog->findChild<QGridLayout*>("gridLayout");
@@ -56,6 +61,7 @@ Manager::Manager(QWidget *parent) :
     connect(colorDialog,&ColorDialog::colorChanged,[=](const QColor color){
         Q_EMIT colorChanged(color.name());
         colorListWidget->setColor(color);
+        syncColorControl(color.name());
     });
 
     // Screen color picking goes through the XDG desktop portal so it works
@@ -70,6 +76,37 @@ Manager::Manager(QWidget *parent) :
 
     ui->colorBoxLayout->addWidget(colorDialog);
     ui->savedColorsBoxLayout->addWidget(colorListWidget);
+
+    // Hint when a hex-style input can't be parsed (other formats are
+    // resolved by the converter and can't be validated here).
+    connect(ui->colorControl, &QLineEdit::editingFinished, this, [this]{
+        const QString text = ui->colorControl->text().simplified();
+        const bool badHex = text.startsWith('#') && !QColor(text).isValid();
+        ui->colorControl->setStyleSheet(
+            badHex ? QStringLiteral("QLineEdit { border: 1px solid #d9534f; }")
+                   : QString());
+    });
+    connect(ui->colorControl, &QLineEdit::textEdited, this,
+            [this]{ ui->colorControl->setStyleSheet(QString()); });
+
+    // Keyboard shortcuts (window-wide)
+    auto *pickShortcut = new QShortcut(QKeySequence(QStringLiteral("Ctrl+P")), this);
+    connect(pickShortcut, &QShortcut::activated, screenPicker, &ScreenPicker::pickColor);
+
+    auto *saveShortcut = new QShortcut(QKeySequence(QStringLiteral("Ctrl+D")), this);
+    connect(saveShortcut, &QShortcut::activated,
+            colorListWidget, &ColorListWidget::append);
+
+    auto *copyShortcut = new QShortcut(QKeySequence(QStringLiteral("Ctrl+Shift+C")), this);
+    connect(copyShortcut, &QShortcut::activated, this, [this]{
+        QApplication::clipboard()->setText(colorDialog->color().name());
+    });
+
+    auto *focusShortcut = new QShortcut(QKeySequence(QStringLiteral("Ctrl+L")), this);
+    connect(focusShortcut, &QShortcut::activated, this, [this]{
+        ui->colorControl->setFocus();
+        ui->colorControl->selectAll();
+    });
 
     if (settings.value("managerSplitterState").isValid())
         ui->managerSplitter->restoreState(
@@ -97,6 +134,17 @@ void Manager::setFromHex6(QString hex6)
     colorDialog->setColor(QColor(hex6));
     colorListWidget->setColor(QColor(hex6));
     colorDialog->blockSignals(false);
+    syncColorControl(QColor(hex6).name());
+}
+
+// Keep the input field showing the current color without disturbing the
+// user while they are typing in it (setText resets isModified).
+void Manager::syncColorControl(const QString &text)
+{
+    if (ui->colorControl->hasFocus() && ui->colorControl->isModified())
+        return;
+    QSignalBlocker blocker(ui->colorControl);
+    ui->colorControl->setText(text);
 }
 
 void Manager::initialize(QColor color)
@@ -122,10 +170,16 @@ void Manager::on_colorControl_textChanged(const QString &arg1)
 
 void Manager::on_supportedInputs_clicked()
 {
-    SupportedInputs *sup = new SupportedInputs(this);
-    sup->setWindowTitle(QApplication::applicationName()+" | "+"Supported Input");
-    sup->setAttribute(Qt::WA_DeleteOnClose);
-    sup->show();
+    // Reuse the open dialog instead of stacking a new copy per click.
+    if (!supportedInputsDialog) {
+        supportedInputsDialog = new SupportedInputs(this);
+        supportedInputsDialog->setWindowTitle(
+            QApplication::applicationName()+" | "+"Supported Input");
+        supportedInputsDialog->setAttribute(Qt::WA_DeleteOnClose);
+    }
+    supportedInputsDialog->show();
+    supportedInputsDialog->raise();
+    supportedInputsDialog->activateWindow();
 }
 
 void Manager::saveSettings()
